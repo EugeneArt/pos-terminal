@@ -155,6 +155,86 @@ footer {
     font-weight: 700;
 }
 
+/*item-popup*/
+.item-popup {
+    display: none;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -150px;
+    top: 50%;
+    left: 0;
+    right: 0;
+
+    width: 400px;
+    height: 300px;
+    /*border-radius: 4%;*/
+
+    background: #337ab7;
+    z-index: 100;
+}
+
+.item-popup img {
+    margin: 12px 0 0 10px;
+    width: 200px;
+    height: 150px;
+    border-radius: 50%;
+}
+.item-popup_title {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+.item-popup_price {
+    position: absolute;
+    top: 5%;
+    right: 40%;
+    padding: 5px 10px;
+    background: #fff;
+    line-height: 30px;
+    color: #337ab7;
+    border-radius: 100%;
+    z-index: 2;
+}
+.item-popup_nav {
+    margin-top: 30px;
+    text-align: center;
+}
+.item-popup_btn {
+    padding: 15px 40px;
+    margin: 10px;
+    background: #fff;
+    font-size: 18px;
+    font-weight: 700;
+}
+#count {
+    width: 40px;
+    height: 35px;
+    border: none;
+    margin: 0;
+    text-align: center;
+}
+.item-popup_count {
+    display: inline-block;
+    vertical-align: bottom;
+}
+.item-popup_count input[type="button"] {
+    width: 35px;
+    height: 35px;
+    margin: 0 7px;
+    border: none;
+    background: #fff;
+    vertical-align: bottom;
+    color: #337ab7;
+    
+}
+
+
+
+
+
 /*clock*/
 .clock {
     display: inline-block;
@@ -198,4 +278,18 @@ footer {
 
 ::-webkit-scrollbar-thumb {
     -webkit-box-shadow: inset 0 0 6px rgba(51,122,183,0.8);
+}
+.boobs {
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+.boobs img {
+    width: 100%;
+    height: 100%;
+    margin-right: auto;
+    margin-left: auto;
 }
