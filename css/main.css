@@ -4,6 +4,7 @@
 }
 
 html, body{
+    user-select: none;
     /*width: 1024px;*/
     height: 100%;
 

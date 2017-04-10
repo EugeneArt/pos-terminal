@@ -28,7 +28,6 @@ $(document).ready(function(){
 
 
     // item-popup
-
     $("#count_min").click(function () {
         var val = $("#count").val();
         var intVal = parseInt(val);
@@ -56,10 +55,10 @@ $(document).ready(function(){
         takePopupItem();
     });
 
-    //Easter egg
+
     var click = 0;
     $(".clock").click(function () {
-        if (click > 5) {
+        if (click > 10) {
             var boobs = $('<div/>').addClass("boobs");
             var img = $('<img/>').attr("src", "images/easter-egg/boobs.jpg");
             boobs.append(img);
@@ -76,7 +75,6 @@ $(document).ready(function(){
 
 });
 
-
 function scanBarcode() {
     var names = ['Бублик','Салат оливье', 'Франзуская булочка', 'Творожный десерт'];
     var prices = ['2.11 руб','0.70 руб','2.22 руб','1.55 руб'];
@@ -90,30 +88,23 @@ function scanBarcode() {
             str += key;
         } else {
             if (str.length == 13 ){
-                // goods.forEach(function (item) {
-                //    if(item.barcode == str) {
-                //        addTextToList(item.name,item.price, $(".list"));
-                //    }
-                // });
-                console.log(str);
+
                 var item = Math.floor(Math.random()*names.length);
                 var currentName = names[item];
                 var currentPrice = prices[item];
 
+                //to add recognize good for future
                 good = {};
                 good.barcode =  str;
                 good.name = currentName;
                 good.price = currentPrice;
                 goods.push(good);
 
-                // names.splice(item, 1);
-                // prices.splice(item, 1);
                 addTextToList(currentName,currentPrice, $(".list"));
                 addTextToList(currentName,currentPrice, $(".popup-list"));
                 scrollToBottom();
             }
             str = '';
-
         }
     });
 }
@@ -132,13 +123,12 @@ function calculate() {
     $('.list li span').each(function()
     {
         var str = $(this).text();
-        if(str.length > 10) {
-            sum += 1;
-        } else {
+        if(str.length) {
             var string = $(this).text().slice(0,-4);
             var int = parseFloat(string);
             sum += int;
         }
+
     });
 
     if(sum == 0) {
@@ -147,13 +137,14 @@ function calculate() {
     }else {
         $(".popup h1").text("Сумма заказа: " + sum.toFixed(2) + " руб.");
     }
-
 }
+
 function addTextToList(name,price, listName) {
     var li = $('<li/>').text(name);
     li.append($('<span/>').text(price));
     listName.append(li);
 }
+
 function scrollToBottom() {
     $(".terminal").animate({
         scrollTop: $(".terminal")[0].scrollHeight
