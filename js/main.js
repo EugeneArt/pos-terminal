@@ -10,9 +10,9 @@ $(document).ready(function(){
         addToItemPopup(name,price, img);
     });
 
-    //add to popup
     $(".calc-btn").click(function () {
         calculate();
+        createPopupList();
     });
 
     $(".accept").click(function () {
@@ -26,8 +26,6 @@ $(document).ready(function(){
         $(".popup-list").empty();
     });
 
-
-    // item-popup
     $("#count_min").click(function () {
         var val = $("#count").val();
         var intVal = parseInt(val);
@@ -75,38 +73,88 @@ $(document).ready(function(){
 
 });
 
-function scanBarcode() {
-    var names = ['Бублик','Салат оливье', 'Франзуская булочка', 'Творожный десерт'];
-    var prices = ['2.11 руб','0.70 руб','2.22 руб','1.55 руб'];
 
-    var goods = [];
+function scanBarcode() {
+
     var str = '';
     $(document).keydown(function(event){
         event.preventDefault();
         var key = event.key;
-        if(key != 'Enter' && key != 'j' && key != 'Control') {
+        if(key != 'Enter') {
             str += key;
         } else {
             if (str.length == 13 ){
+                var barcode = str;
+                var product = generateProduct(barcode);
+                if ($.isEmptyObject(product)) {
+                    product = randomGenereateProduct();
+                }
 
-                var item = Math.floor(Math.random()*names.length);
-                var currentName = names[item];
-                var currentPrice = prices[item];
+                var equalProduct = getEqualProduct(product.name,1, product.price.slice(0,-4));
 
-                //to add recognize good for future
-                good = {};
-                good.barcode =  str;
-                good.name = currentName;
-                good.price = currentPrice;
-                goods.push(good);
+                if ($.isEmptyObject(equalProduct)) {
+                    addTextToList(product.name + " (1 шт.)   ", product.price, $(".list"));
+                } else {
+                    addTextToList(equalProduct.name + " (" + equalProduct.fullQuantity + " шт.)   ",equalProduct.fullPrice.toFixed(2) + " руб.", $(".list"));
+                }
 
-                addTextToList(currentName,currentPrice, $(".list"));
-                addTextToList(currentName,currentPrice, $(".popup-list"));
                 scrollToBottom();
             }
             str = '';
         }
     });
+}
+
+function generateProduct(barcode) {
+    products = [
+        {
+            barcode: "1234567890128",
+            name: "Творожный десерт",
+            price: "2.11 руб."
+        },
+        {
+            barcode: "1234567290133",
+            name: "Французская булочка",
+            price: "1.20 руб."
+        },
+        {
+            barcode:"2233567290111",
+            name: "Салат Оливье",
+            price: "3.05 руб."
+        },
+        {
+            barcode:"1222337290551",
+            name: "Суп Свекольник",
+            price: "1.65 руб."
+        },
+        {
+            barcode:"4224537296514",
+            name: "Драники",
+            price: "2.48 руб."
+        }
+
+    ];
+    var product = {};
+    products.forEach(function (item) {
+        if(item.barcode == barcode) {
+            product.name = item.name;
+            product.price = item.price;
+        }
+    });
+    return product;
+
+}
+
+function randomGenereateProduct() {
+    var product= {};
+    var names = ['Бублик','Спаржа', 'Курица гриль', 'Мясная нарезка'];
+    var prices = ['2.11 руб.','0.70 руб.','2.22 руб.','1.55 руб.'];
+    var item = Math.floor(Math.random()*names.length);
+
+    product.name = names[item];
+    product.price = prices[item];
+
+    return product;
 }
 
 function addToItemPopup(name,price, img) {
@@ -115,6 +163,7 @@ function addToItemPopup(name,price, img) {
     $(".item-popup img").attr("src", img);
     $(".item-popup").show();
 }
+
 function calculate() {
     $(".popup").show();
     $(".accept").show();
@@ -139,6 +188,12 @@ function calculate() {
     }
 }
 
+function createPopupList() {
+    $('.list li').each(function () {
+        $(".popup-list").append($(this));
+    })
+}
+
 function addTextToList(name,price, listName) {
     var li = $('<li/>').text(name);
     li.append($('<span/>').text(price));
@@ -159,10 +214,35 @@ function takePopupItem() {
     var intPrice = parseFloat(price);
     var fullprice = quantity*intPrice;
 
-    addTextToList(name + " (" + quantity + " шт.)   ",fullprice.toFixed(2) + " руб.", $(".list"));
-    addTextToList(name + " (" + quantity + " шт.)   ",fullprice.toFixed(2) + " руб.", $(".popup-list"));
+    var product = getEqualProduct(name,quantity, fullprice);
+
+    if ($.isEmptyObject(product)) {
+        addTextToList(name + " (" + quantity + " шт.)   ", fullprice.toFixed(2) + " руб.", $(".list"));
+    } else {
+        addTextToList(product.name + " (" + product.fullQuantity + " шт.)   ",product.fullPrice.toFixed(2) + " руб.", $(".list"));
+    }
+
     scrollToBottom();
     clearPopup();
+}
+
+function getEqualProduct(name, quantity, price) {
+    var list = $(".list li");
+    product = {};
+    list.each(function () {
+        var str = $(this).text();
+        var listName = str.split("  ")[0].split(" ").slice(0,-2).join(" ");
+        var listQuantity = str.split("  ")[0].split(" ").slice(-2)[0].substring(1, str.length);
+        var listPrice = $(this).find("span").text();
+        if (listName == name) {
+            $(this).remove();
+            product.name = name;
+            product.fullQuantity = parseInt(listQuantity) + parseInt(quantity);
+            product.fullPrice = parseFloat(listPrice) + parseFloat(price);
+        }
+    });
+
+    return product;
 }
 
 function clearPopup() {
